@@ -1,0 +1,28 @@
+{
+  "name": "מעקב שעות עבודה",
+  "short_name": "שעות עבודה",
+  "description": "מעקב שעות עבודה ושכר עם חישוב שעות נוספות",
+  "start_url": "./work-hours-tracker.html",
+  "display": "standalone",
+  "background_color": "#0a0e1a",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "lang": "he",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "screenshots": []
+}

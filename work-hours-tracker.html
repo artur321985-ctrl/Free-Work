@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מעקב שעות עבודה</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3b82f6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="שעות עבודה">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2234;
+    --surface3: #1e2d44;
+    --accent: #3b82f6;
+    --accent2: #60a5fa;
+    --gold: #f59e0b;
+    --gold2: #fbbf24;
+    --green: #10b981;
+    --red: #ef4444;
+    --purple: #8b5cf6;
+    --text: #f1f5f9;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --border: #1e2d44;
+    --border2: #2d3f5c;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    direction: rtl;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+    border-bottom: 1px solid var(--border2);
+    padding: 16px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .header h1 {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .header p {
+    font-size: 11px;
+    color: var(--text2);
+    font-weight: 400;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 12px;
+    overflow-x: auto;
+    gap: 4px;
+  }
+
+  .tab {
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text3);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+    font-family: 'Heebo', sans-serif;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+
+  .tab.active {
+    color: var(--accent2);
+    border-bottom-color: var(--accent);
+  }
+
+  /* PAGES */
+  .page { display: none; padding: 16px; }
+  .page.active { display: block; }
+
+  /* SECTION */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::before {
+    content: '';
+    width: 3px;
+    height: 14px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  /* FORM */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text2);
+  }
+
+  input, select {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'Heebo', sans-serif;
+    width: 100%;
+    direction: rtl;
+    transition: border-color 0.2s;
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--surface3);
+  }
+
+  select option { background: var(--surface2); }
+
+  /* BUTTONS */
+  .btn {
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    font-family: 'Heebo', sans-serif;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    color: white;
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 8px;
+  }
+
+  .btn-danger { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+  .btn-ghost { background: var(--surface2); color: var(--text2); border: 1px solid var(--border2); }
+
+  /* BREAKDOWN BOX */
+  .breakdown {
+    background: var(--surface2);
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 12px;
+    border: 1px solid var(--border2);
+    display: none;
+  }
+
+  .breakdown.show { display: block; }
+
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .breakdown-row:last-child { border-bottom: none; font-weight: 700; font-size: 14px; }
+
+  .breakdown-row .label { color: var(--text2); }
+  .breakdown-row .value { font-weight: 600; }
+  .rate-125 { color: var(--gold); }
+  .rate-150 { color: #f97316; }
+  .rate-175 { color: var(--red); }
+  .rate-200 { color: var(--purple); }
+  .rate-normal { color: var(--green); }
+  .total-value { color: var(--accent2); font-size: 16px; }
+
+  /* SHIFT LIST */
+  .shift-item {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shift-item::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+  }
+
+  .shift-item.regular::before { background: var(--green); }
+  .shift-item.shabbat::before { background: var(--purple); }
+  .shift-item.friday::before { background: var(--gold); }
+  .shift-item.night::before { background: var(--accent); }
+
+  .shift-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+
+  .shift-date {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .shift-type-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+  }
+
+  .badge-regular { background: rgba(16,185,129,0.15); color: var(--green); }
+  .badge-shabbat { background: rgba(139,92,246,0.15); color: var(--purple); }
+  .badge-friday { background: rgba(245,158,11,0.15); color: var(--gold); }
+  .badge-night { background: rgba(59,130,246,0.15); color: var(--accent2); }
+
+  .shift-details {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text2);
+    margin-bottom: 8px;
+  }
+
+  .shift-detail { display: flex; align-items: center; gap: 4px; }
+
+  .shift-earnings {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  .shift-hours { font-size: 12px; color: var(--text2); }
+  .shift-total { font-size: 15px; font-weight: 800; color: var(--accent2); }
+
+  /* SUMMARY CARDS */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    text-align: center;
+  }
+
+  .summary-card.highlight {
+    background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1));
+    border-color: var(--accent);
+  }
+
+  .card-value {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .card-label {
+    font-size: 11px;
+    color: var(--text3);
+    font-weight: 500;
+  }
+
+  /* WAGE SETTING */
+  .wage-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface2);
+    border-radius: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--border2);
+  }
+
+  .wage-amount {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--gold);
+  }
+
+  .wage-label { font-size: 12px; color: var(--text3); }
+
+  /* LEGEND */
+  .legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .legend-item {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border2);
+  }
+
+  .legend-rate { font-size: 18px; font-weight: 900; margin-bottom: 2px; }
+  .legend-desc { font-size: 11px; color: var(--text3); line-height: 1.4; }
+
+  /* PERIOD SELECTOR */
+  .period-selector {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    background: var(--surface2);
+    border-radius: 12px;
+    padding: 4px;
+  }
+
+  .period-btn {
+    flex: 1;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--text3);
+    font-family: 'Heebo', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .period-btn.active {
+    background: var(--surface3);
+    color: var(--accent2);
+  }
+
+  /* EXPORT */
+  .export-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .export-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    background: var(--surface2);
+    color: var(--text2);
+    font-family: 'Heebo', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .export-btn:hover { border-color: var(--accent); color: var(--accent2); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text3);
+  }
+
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state p { font-size: 13px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--green);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    z-index: 999;
+    transition: transform 0.3s;
+    font-family: 'Heebo', sans-serif;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* NOTES */
+  textarea {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'Heebo', sans-serif;
+    width: 100%;
+    resize: vertical;
+    min-height: 60px;
+    direction: rtl;
+  }
+
+  textarea:focus { outline: none; border-color: var(--accent); }
+
+  /* FILTER CHIPS */
+  .filter-chips {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    margin-bottom: 12px;
+    padding-bottom: 4px;
+  }
+
+  .chip {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    background: var(--surface2);
+    color: var(--text3);
+    font-family: 'Heebo', sans-serif;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+
+  .chip.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border-radius: 20px 20px 0 0;
+    padding: 20px 16px 32px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    border-top: 1px solid var(--border2);
+  }
+
+  .modal-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--border2);
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+
+  .modal-title {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+
+  /* OVERTIME VISUAL */
+  .overtime-bar {
+    background: var(--surface2);
+    border-radius: 8px;
+    height: 8px;
+    overflow: hidden;
+    margin-top: 4px;
+    display: flex;
+  }
+
+  .ot-segment {
+    height: 100%;
+    transition: width 0.4s ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title">
+    <div class="header-icon">⏱</div>
+    <div>
+      <h1>מעקב שעות עבודה</h1>
+      <p>חישוב לפי חוק עבודת שעות ישראל</p>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('add')">➕ הוסף משמרת</button>
+  <button class="tab" onclick="switchTab('shifts')">📋 משמרות</button>
+  <button class="tab" onclick="switchTab('summary')">📊 סיכום</button>
+  <button class="tab" onclick="switchTab('settings')">⚙️ הגדרות</button>
+</div>
+
+<!-- TAB: ADD SHIFT -->
+<div class="page active" id="page-add">
+  <div class="section">
+    <div class="section-title">פרטי המשמרת</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>📅 תאריך</label>
+        <input type="date" id="shift-date">
+      </div>
+      <div class="form-group">
+        <label>🕐 שעת התחלה</label>
+        <input type="time" id="shift-start">
+      </div>
+      <div class="form-group">
+        <label>🕕 שעת סיום</label>
+        <input type="time" id="shift-end">
+      </div>
+      <div class="form-group">
+        <label>☕ הפסקה (דקות)</label>
+        <input type="number" id="shift-break" value="30" min="0" max="120" placeholder="30">
+      </div>
+      <div class="form-group full">
+        <label>💬 הערות (אופציונלי)</label>
+        <textarea id="shift-notes" placeholder="הערות למשמרת זו..."></textarea>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="calculateShift()">🔢 חשב ושמור</button>
+  </div>
+
+  <div class="breakdown" id="breakdown">
+    <div class="section-title" style="margin-bottom:10px">פירוט חישוב</div>
+    <div id="breakdown-content"></div>
+    <div class="overtime-bar" id="ot-bar" style="margin-top:10px;"></div>
+    <button class="btn btn-primary" id="save-btn" onclick="saveShift()" style="margin-top:12px;">💾 שמור משמרת</button>
+  </div>
+</div>
+
+<!-- TAB: SHIFTS LIST -->
+<div class="page" id="page-shifts">
+  <div class="filter-chips">
+    <button class="chip active" onclick="filterShifts('all', this)">הכל</button>
+    <button class="chip" onclick="filterShifts('regular', this)">ימי חול</button>
+    <button class="chip" onclick="filterShifts('night', this)">לילה</button>
+    <button class="chip" onclick="filterShifts('friday', this)">יום שישי</button>
+    <button class="chip" onclick="filterShifts('shabbat', this)">שבת</button>
+  </div>
+  <div id="shifts-list"></div>
+</div>
+
+<!-- TAB: SUMMARY -->
+<div class="page" id="page-summary">
+  <div class="period-selector">
+    <button class="period-btn active" onclick="setPeriod('week', this)">שבוע נוכחי</button>
+    <button class="period-btn" onclick="setPeriod('month', this)">חודש נוכחי</button>
+    <button class="period-btn" onclick="setPeriod('all', this)">הכל</button>
+  </div>
+  <div class="summary-grid" id="summary-cards"></div>
+  <div class="section" id="summary-breakdown-section"></div>
+  <div class="export-row">
+    <button class="export-btn" onclick="exportCSV()">📄 ייצוא CSV</button>
+    <button class="export-btn" onclick="exportText()">📋 העתק טקסט</button>
+  </div>
+</div>
+
+<!-- TAB: SETTINGS -->
+<div class="page" id="page-settings">
+  <div class="section">
+    <div class="section-title">שכר שעתי</div>
+    <div class="wage-display">
+      <div>
+        <div class="wage-label">שכר לשעה רגילה</div>
+        <div class="wage-amount" id="wage-display">₪ 32.30</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('wage-modal').classList.add('open')">✏️ שנה</button>
+    </div>
+    <div style="font-size:11px; color:var(--text3); margin-top:8px; line-height:1.5;">
+      ⚠️ שכר מינימום 2025: ₪32.30 לשעה. שנה לשכר האמיתי שלך לחישוב מדויק.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">חוקי שעות נוספות – ישראל</div>
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-rate rate-normal">100%</div>
+        <div class="legend-desc">שעות 1–8 בימי חול<br>שעות 1–7 בשישי/ערב חג</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-rate rate-125">125%</div>
+        <div class="legend-desc">שעות 9–10 ביום רגיל<br>שעה 8 בשישי/ערב חג</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-rate rate-150">150%</div>
+        <div class="legend-desc">שעה 11+ ביום רגיל<br>שעה 9+ בשישי/ערב חג</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-rate rate-200">200%</div>
+        <div class="legend-desc">עבודה בשבת/חג – כל השעות</div>
+      </div>
+    </div>
+    <div style="font-size:11px; color:var(--text3); margin-top:10px; line-height:1.6; background:var(--surface2); border-radius:10px; padding:10px;">
+      📌 <strong style="color:var(--text2)">לפי חוק שעות עבודה ומנוחה, תשי"א-1951:</strong><br>
+      • יום עבודה רגיל = 8 שעות (45 שבועיות)<br>
+      • יום שישי/ערב חג = 7 שעות<br>
+      • שבת = תשלום 200% לכל שעה<br>
+      • 10 ימי חופש + ימי מחלה לפי חוק
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">ניהול נתונים</div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-ghost btn-sm" style="flex:1" onclick="clearAllData()">🗑️ מחק הכל</button>
+    </div>
+  </div>
+</div>
+
+<!-- WAGE MODAL -->
+<div class="modal-overlay" id="wage-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✏️ עדכון שכר שעתי</div>
+    <div class="form-group">
+      <label>שכר לשעה (₪)</label>
+      <input type="number" id="wage-input" placeholder="32.30" step="0.1" min="32.30">
+    </div>
+    <div style="font-size:11px; color:var(--text3); margin:8px 0 14px; line-height:1.5;">
+      שכר מינימום 2025: ₪32.30/שעה
+    </div>
+    <button class="btn btn-primary" onclick="saveWage()">✅ שמור</button>
+    <button class="btn btn-ghost" style="margin-top:8px;width:100%" onclick="document.getElementById('wage-modal').classList.remove('open')">ביטול</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ נשמר בהצלחה!</div>
+
+<script>
+// ========== STATE ==========
+let shifts = JSON.parse(localStorage.getItem('shifts') || '[]');
+let hourlyWage = parseFloat(localStorage.getItem('wage') || '32.30');
+let pendingShift = null;
+let currentFilter = 'all';
+let currentPeriod = 'month';
+
+// ========== INIT ==========
+document.addEventListener('DOMContentLoaded', () => {
+  const today = new Date();
+  document.getElementById('shift-date').value = today.toISOString().split('T')[0];
+  document.getElementById('wage-input').value = hourlyWage;
+  document.getElementById('wage-display').textContent = `₪ ${hourlyWage.toFixed(2)}`;
+  renderShifts();
+  renderSummary();
+});
+
+// ========== TAB SWITCH ==========
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('page-' + tab).classList.add('active');
+  if (tab === 'shifts') renderShifts();
+  if (tab === 'summary') renderSummary();
+}
+
+// ========== SHIFT TYPE DETECTION ==========
+function getShiftType(dateStr) {
+  const date = new Date(dateStr + 'T12:00:00');
+  const day = date.getDay(); // 0=Sun, 5=Fri, 6=Sat
+  if (day === 6) return 'shabbat';
+  if (day === 5) return 'friday';
+  return 'regular';
+}
+
+function isNightShift(startTime) {
+  const h = parseInt(startTime.split(':')[0]);
+  return h >= 22 || h < 6;
+}
+
+// ========== CALCULATE ==========
+function calculateShift() {
+  const date = document.getElementById('shift-date').value;
+  const start = document.getElementById('shift-start').value;
+  const end = document.getElementById('shift-end').value;
+  const breakMin = parseInt(document.getElementById('shift-break').value) || 0;
+
+  if (!date || !start || !end) {
+    showToast('⚠️ אנא מלא תאריך, שעת התחלה וסיום', '#ef4444');
+    return;
+  }
+
+  const startMin = timeToMinutes(start);
+  let endMin = timeToMinutes(end);
+  if (endMin <= startMin) endMin += 24 * 60; // night shift crosses midnight
+
+  const totalMin = endMin - startMin - breakMin;
+  if (totalMin <= 0) {
+    showToast('⚠️ שעות עבודה לא תקינות', '#ef4444');
+    return;
+  }
+
+  const totalHours = totalMin / 60;
+  const shiftType = getShiftType(date);
+  const night = isNightShift(start);
+
+  // Calculate pay breakdown
+  const breakdown = calcBreakdown(totalHours, shiftType);
+  const totalPay = breakdown.reduce((s, r) => s + r.pay, 0);
+
+  pendingShift = {
+    id: Date.now(),
+    date,
+    start,
+    end,
+    breakMin,
+    totalHours,
+    shiftType,
+    night,
+    breakdown,
+    totalPay,
+    notes: document.getElementById('shift-notes').value
+  };
+
+  // Render breakdown
+  renderBreakdown(breakdown, totalHours, totalPay, shiftType, night);
+  document.getElementById('breakdown').classList.add('show');
+}
+
+function calcBreakdown(hours, type) {
+  const wage = hourlyWage;
+  const rows = [];
+
+  if (type === 'shabbat') {
+    // All hours at 200%
+    rows.push({ label: `${hours.toFixed(2)} שעות × 200% (שבת/חג)`, hours, rate: 200, pay: hours * wage * 2, cls: 'rate-200' });
+  } else if (type === 'friday') {
+    // 7 regular, hour 8 = 125%, hour 9+ = 150%
+    const h1 = Math.min(hours, 7);
+    const h2 = Math.max(0, Math.min(hours - 7, 1));
+    const h3 = Math.max(0, hours - 8);
+    if (h1 > 0) rows.push({ label: `${h1.toFixed(2)} שעות × 100% (שישי רגיל)`, hours: h1, rate: 100, pay: h1 * wage, cls: 'rate-normal' });
+    if (h2 > 0) rows.push({ label: `${h2.toFixed(2)} שעות × 125% (שישי שעה 8)`, hours: h2, rate: 125, pay: h2 * wage * 1.25, cls: 'rate-125' });
+    if (h3 > 0) rows.push({ label: `${h3.toFixed(2)} שעות × 150% (שישי שעה 9+)`, hours: h3, rate: 150, pay: h3 * wage * 1.5, cls: 'rate-150' });
+  } else {
+    // Regular: 8 normal, 9-10 = 125%, 11+ = 150%
+    const h1 = Math.min(hours, 8);
+    const h2 = Math.max(0, Math.min(hours - 8, 2));
+    const h3 = Math.max(0, hours - 10);
+    if (h1 > 0) rows.push({ label: `${h1.toFixed(2)} שעות × 100% (רגיל)`, hours: h1, rate: 100, pay: h1 * wage, cls: 'rate-normal' });
+    if (h2 > 0) rows.push({ label: `${h2.toFixed(2)} שעות × 125% (שעות 9-10)`, hours: h2, rate: 125, pay: h2 * wage * 1.25, cls: 'rate-125' });
+    if (h3 > 0) rows.push({ label: `${h3.toFixed(2)} שעות × 150% (שעה 11+)`, hours: h3, rate: 150, pay: h3 * wage * 1.5, cls: 'rate-150' });
+  }
+
+  return rows;
+}
+
+function renderBreakdown(breakdown, totalHours, totalPay, shiftType, night) {
+  let html = '';
+
+  // Type indicator
+  const typeLabel = shiftType === 'shabbat' ? '🟣 משמרת שבת' :
+                    shiftType === 'friday' ? '🟡 יום שישי' :
+                    night ? '🔵 משמרת לילה' : '🟢 יום עבודה רגיל';
+
+  html += `<div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:10px;">${typeLabel} | ${totalHours.toFixed(2)} שעות נטו</div>`;
+
+  breakdown.forEach(row => {
+    html += `<div class="breakdown-row">
+      <span class="label">${row.label}</span>
+      <span class="value ${row.cls}">₪${row.pay.toFixed(2)}</span>
+    </div>`;
+  });
+
+  html += `<div class="breakdown-row">
+    <span class="label" style="color:var(--text)">💰 סה"כ לשיפוי</span>
+    <span class="value total-value">₪${totalPay.toFixed(2)}</span>
+  </div>`;
+
+  document.getElementById('breakdown-content').innerHTML = html;
+
+  // Visual bar
+  const bar = document.getElementById('ot-bar');
+  bar.innerHTML = '';
+  if (breakdown.length > 1) {
+    breakdown.forEach(row => {
+      const pct = (row.hours / totalHours) * 100;
+      const colors = { 100: '#10b981', 125: '#f59e0b', 150: '#f97316', 175: '#ef4444', 200: '#8b5cf6' };
+      const seg = document.createElement('div');
+      seg.className = 'ot-segment';
+      seg.style.width = pct + '%';
+      seg.style.background = colors[row.rate] || '#64748b';
+      seg.title = `${row.rate}% - ${row.hours.toFixed(1)}h`;
+      bar.appendChild(seg);
+    });
+  }
+}
+
+function saveShift() {
+  if (!pendingShift) return;
+  shifts.unshift(pendingShift);
+  localStorage.setItem('shifts', JSON.stringify(shifts));
+  pendingShift = null;
+  document.getElementById('breakdown').classList.remove('show');
+  document.getElementById('shift-notes').value = '';
+  showToast('✅ משמרת נשמרה!');
+}
+
+// ========== RENDER SHIFTS ==========
+function renderShifts() {
+  const list = document.getElementById('shifts-list');
+  let filtered = currentFilter === 'all' ? shifts :
+    currentFilter === 'night' ? shifts.filter(s => s.night) :
+    shifts.filter(s => s.shiftType === currentFilter);
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="icon">📭</div><p>אין משמרות להצגה</p></div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(s => {
+    const dateObj = new Date(s.date + 'T12:00:00');
+    const dayNames = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+    const dayName = dayNames[dateObj.getDay()];
+    const badgeCls = s.shiftType === 'shabbat' ? 'badge-shabbat' :
+                     s.shiftType === 'friday' ? 'badge-friday' :
+                     s.night ? 'badge-night' : 'badge-regular';
+    const typeLabel = s.shiftType === 'shabbat' ? '🟣 שבת' :
+                      s.shiftType === 'friday' ? '🟡 שישי' :
+                      s.night ? '🔵 לילה' : '🟢 ימי חול';
+    return `<div class="shift-item ${s.shiftType === 'shabbat' ? 'shabbat' : s.shiftType === 'friday' ? 'friday' : s.night ? 'night' : 'regular'}">
+      <div class="shift-header">
+        <div>
+          <div class="shift-date">יום ${dayName}, ${formatDate(s.date)}</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="shift-type-badge ${badgeCls}">${typeLabel}</span>
+          <button class="btn btn-danger btn-sm" onclick="deleteShift(${s.id})">🗑</button>
+        </div>
+      </div>
+      <div class="shift-details">
+        <span class="shift-detail">⏰ ${s.start} – ${s.end}</span>
+        <span class="shift-detail">☕ ${s.breakMin} דק' הפסקה</span>
+        ${s.notes ? `<span class="shift-detail" style="color:var(--text3)">💬 ${s.notes}</span>` : ''}
+      </div>
+      <div class="shift-earnings">
+        <span class="shift-hours">${s.totalHours.toFixed(2)} שעות נטו</span>
+        <span class="shift-total">₪${s.totalPay.toFixed(2)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterShifts(filter, el) {
+  currentFilter = filter;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderShifts();
+}
+
+function deleteShift(id) {
+  if (confirm('למחוק משמרת זו?')) {
+    shifts = shifts.filter(s => s.id !== id);
+    localStorage.setItem('shifts', JSON.stringify(shifts));
+    renderShifts();
+    renderSummary();
+    showToast('🗑️ משמרת נמחקה', '#ef4444');
+  }
+}
+
+// ========== SUMMARY ==========
+function setPeriod(period, el) {
+  currentPeriod = period;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderSummary();
+}
+
+function renderSummary() {
+  const now = new Date();
+  let filtered = shifts;
+
+  if (currentPeriod === 'week') {
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    filtered = shifts.filter(s => new Date(s.date) >= startOfWeek);
+  } else if (currentPeriod === 'month') {
+    filtered = shifts.filter(s => {
+      const d = new Date(s.date);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+  }
+
+  const totalHours = filtered.reduce((s, sh) => s + sh.totalHours, 0);
+  const totalPay = filtered.reduce((s, sh) => s + sh.totalPay, 0);
+  const shabbatShifts = filtered.filter(s => s.shiftType === 'shabbat').length;
+  const nightShifts = filtered.filter(s => s.night).length;
+
+  let normalHours = 0, ot125 = 0, ot150 = 0, ot200 = 0;
+  filtered.forEach(sh => {
+    sh.breakdown.forEach(row => {
+      if (row.rate === 100) normalHours += row.hours;
+      else if (row.rate === 125) ot125 += row.hours;
+      else if (row.rate === 150) ot150 += row.hours;
+      else if (row.rate === 200) ot200 += row.hours;
+    });
+  });
+
+  document.getElementById('summary-cards').innerHTML = `
+    <div class="summary-card highlight">
+      <div class="card-value">₪${totalPay.toFixed(0)}</div>
+      <div class="card-label">💰 סה"כ לשיפוי</div>
+    </div>
+    <div class="summary-card">
+      <div class="card-value">${totalHours.toFixed(1)}</div>
+      <div class="card-label">⏱ שעות עבודה</div>
+    </div>
+    <div class="summary-card">
+      <div class="card-value">${filtered.length}</div>
+      <div class="card-label">📅 משמרות</div>
+    </div>
+    <div class="summary-card">
+      <div class="card-value">${(ot125 + ot150 + ot200).toFixed(1)}</div>
+      <div class="card-label">⚡ שעות נוספות</div>
+    </div>
+  `;
+
+  let breakdownHtml = '';
+  if (filtered.length > 0) {
+    breakdownHtml = `
+      <div class="section-title">פירוט שעות</div>
+      <div class="breakdown-row"><span class="label">שעות רגילות (100%)</span><span class="value rate-normal">${normalHours.toFixed(2)}h | ₪${(normalHours * hourlyWage).toFixed(0)}</span></div>
+      ${ot125 > 0 ? `<div class="breakdown-row"><span class="label">שעות נוספות (125%)</span><span class="value rate-125">${ot125.toFixed(2)}h | ₪${(ot125 * hourlyWage * 1.25).toFixed(0)}</span></div>` : ''}
+      ${ot150 > 0 ? `<div class="breakdown-row"><span class="label">שעות נוספות (150%)</span><span class="value rate-150">${ot150.toFixed(2)}h | ₪${(ot150 * hourlyWage * 1.5).toFixed(0)}</span></div>` : ''}
+      ${ot200 > 0 ? `<div class="breakdown-row"><span class="label">שבת/חג (200%)</span><span class="value rate-200">${ot200.toFixed(2)}h | ₪${(ot200 * hourlyWage * 2).toFixed(0)}</span></div>` : ''}
+      ${nightShifts > 0 ? `<div class="breakdown-row"><span class="label">🌙 משמרות לילה</span><span class="value rate-normal">${nightShifts} משמרות</span></div>` : ''}
+      ${shabbatShifts > 0 ? `<div class="breakdown-row"><span class="label">🟣 משמרות שבת</span><span class="value rate-200">${shabbatShifts} משמרות</span></div>` : ''}
+      <div class="breakdown-row"><span class="label" style="color:var(--text)">💰 סה"כ</span><span class="value total-value">₪${totalPay.toFixed(2)}</span></div>
+    `;
+  } else {
+    breakdownHtml = `<div class="empty-state"><div class="icon">📊</div><p>אין נתונים לתקופה זו</p></div>`;
+  }
+
+  document.getElementById('summary-breakdown-section').innerHTML = breakdownHtml;
+}
+
+// ========== WAGE ==========
+function saveWage() {
+  const v = parseFloat(document.getElementById('wage-input').value);
+  if (!v || v < 1) { showToast('⚠️ שכר לא תקין', '#ef4444'); return; }
+  hourlyWage = v;
+  localStorage.setItem('wage', v);
+  document.getElementById('wage-display').textContent = `₪ ${v.toFixed(2)}`;
+  document.getElementById('wage-modal').classList.remove('open');
+  showToast('✅ שכר עודכן!');
+  renderSummary();
+}
+
+// ========== EXPORT ==========
+function exportCSV() {
+  if (shifts.length === 0) { showToast('⚠️ אין נתונים', '#f59e0b'); return; }
+  let csv = 'תאריך,יום,התחלה,סיום,הפסקה,שעות נטו,סוג,שכר\n';
+  const days = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+  shifts.forEach(s => {
+    const d = new Date(s.date + 'T12:00:00');
+    csv += `${s.date},${days[d.getDay()]},${s.start},${s.end},${s.breakMin},${s.totalHours.toFixed(2)},${s.shiftType},${s.totalPay.toFixed(2)}\n`;
+  });
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'work_hours.csv';
+  a.click();
+  showToast('📄 CSV הורד!');
+}
+
+function exportText() {
+  if (shifts.length === 0) { showToast('⚠️ אין נתונים', '#f59e0b'); return; }
+  const days = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+  let text = '=== דוח שעות עבודה ===\n\n';
+  shifts.forEach(s => {
+    const d = new Date(s.date + 'T12:00:00');
+    text += `📅 ${formatDate(s.date)} (${days[d.getDay()]})\n`;
+    text += `   ⏰ ${s.start}–${s.end} | ${s.totalHours.toFixed(2)} שעות\n`;
+    text += `   💰 ₪${s.totalPay.toFixed(2)}\n\n`;
+  });
+  const total = shifts.reduce((s, sh) => s + sh.totalPay, 0);
+  text += `\n💰 סה"כ: ₪${total.toFixed(2)}`;
+  navigator.clipboard.writeText(text).then(() => showToast('📋 הועתק!'));
+}
+
+// ========== UTILS ==========
+function timeToMinutes(t) {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`;
+}
+
+function showToast(msg, color = '#10b981') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = color;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function clearAllData() {
+  if (confirm('למחוק את כל הנתונים? פעולה זו בלתי הפיכה.')) {
+    shifts = [];
+    localStorage.removeItem('shifts');
+    renderShifts();
+    renderSummary();
+    showToast('🗑️ כל הנתונים נמחקו', '#ef4444');
+  }
+}
+
+// Close modal on overlay click
+document.getElementById('wage-modal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
+});
+
+// Register Service Worker (PWA)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log('SW registered'))
+      .catch(err => console.log('SW error:', err));
+  });
+}
+</script>
+</body><p style="text-align: center; color: gray;">Создатель: Артур</p>
+</html>
